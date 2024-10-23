@@ -24,7 +24,9 @@ jobs:
         run: npx playwright install chromium
 
       - name: Build and start Angular app
-        run: npm start & npx wait-on http://localhost:4200
+        run: |
+          npm run
+          npm start & npx wait-on http://localhost:4200
 
       - name: Run Playwright tests
         run: npx playwright test --project=chromium
