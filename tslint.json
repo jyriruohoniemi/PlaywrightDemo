@@ -132,6 +132,7 @@
     "use-lifecycle-interface": true,
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
-    "directive-class-suffix": true
+    "directive-class-suffix": true,
+    "@typescript-eslint/no-floating-promises": "error"
 }
 }
