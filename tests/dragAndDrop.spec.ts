@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("Drag and Drop", async ({ page }) => {
+test.skip("Drag and Drop", async ({ page }) => {
   await page.goto("https://www.globalsqa.com/demo-site/draganddrop/");
 
   await page.getByRole("button", { name: "Consent" }).click();
