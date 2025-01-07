@@ -32,14 +32,14 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          # Create output directory
-          mkdir -p test-results
-          # Run tests with explicit output redirection
-          npx playwright test --project=chromium --workers 4 2>&1 | tee test-results/test-output.txt
-          # Show captured output for verification
-          echo "=== Captured Test Output ==="
-          cat test-results/test-output.txt
-          echo "=== End Captured Output ==="
+          # Run tests and save output to variable first
+          TEST_OUTPUT=$(npx playwright test --project=chromium --workers 4 2>&1)
+          # Save output to file
+          echo "$TEST_OUTPUT" > test-output.txt
+          # Display for verification
+          echo "=== Test Output ==="
+          cat test-output.txt
+          echo "=== End Test Output ==="
 
       - name: Upload test results
         if: always()
@@ -75,11 +75,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Parse results from the correct location
-          PASSED=$(grep "passed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-          FAILED=$(grep "failed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-          SKIPPED=$(grep "skipped" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-          DURATION=$(grep "passed" test-results/test-output.txt | grep -o '([^)]*)'|| echo "(0ms)")
+          # Parse results directly from root directory file
+          PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+' || echo "0")
+          FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+' || echo "0")
+          SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+' || echo "0")
+          DURATION=$(grep -o '([0-9.]+m)' test-output.txt || echo "(0ms)")
 
           # Generate new results file
           {
