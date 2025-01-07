@@ -133,7 +133,7 @@ test.describe("Extracting values", () => {
     // Single value
     const basicForm = page.locator("nb-card").filter({ hasText: "Basic form" });
     const buttonText = await basicForm.locator("button").textContent();
-    expect(buttonText).toEqual("Submit1");
+    expect(buttonText).toEqual("Submit");
 
     // Multiple values
     const allRadioButtonLabels = await page
