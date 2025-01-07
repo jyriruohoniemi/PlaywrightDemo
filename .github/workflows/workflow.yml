@@ -38,9 +38,18 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
-      - name: Deploy report to GitHub Pages
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-videos
+          path: test-results/*/video/*.webm
+
+      - name: Deploy report and videos
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: playwright-report
+          publish_dir: |
+            playwright-report
+            test-results

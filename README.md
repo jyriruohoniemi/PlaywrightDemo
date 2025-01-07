@@ -1,9 +1,13 @@
 ### Playwright UI Automation Demo
 
-![Playwright Tests](https://github.com/jyriruohoniemi/PlaywrightDemo/actions/workflows/workflow.yml/badge.svg)
+## Interactive Test Results
+<details>
+<summary>📊 View Latest Test Results (Click to expand)</summary>
 
-### Test Automation Demo
-- [View Latest Test Results](https://jyriruohoniemi.github.io/PlaywrightDemo/playwright-report)
+<iframe src="https://jyriruohoniemi.github.io/PlaywrightDemo" width="800" height="600" frameborder="0"></iframe>
+
+➡️ [Open Full Report](https://jyriruohoniemi.github.io/PlaywrightDemo)
+</details>
 
 This is modified and more lightweight version of the original Ngx-Admin Angular 14 application from akveo.com to practice UI Automation with Playwright.
 
