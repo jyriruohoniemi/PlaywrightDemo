@@ -69,6 +69,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Debug: Show test output content
+          echo "=== Test Output File Contents ==="
+          cat test-results/test-output.txt
+          echo "=== End Test Output ==="
+
           # Ensure working directory exists
           mkdir -p test-results
 
