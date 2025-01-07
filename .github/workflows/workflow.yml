@@ -31,7 +31,9 @@ jobs:
           npm start & npx wait-on http://localhost:4200
 
       - name: Run Playwright tests
-        run: npx playwright test --project=chromium --workers 4 > test-output.txt 2>&1
+        run: |
+          mkdir -p test-results
+          npx playwright test --project=chromium --workers 4 | tee test-results/test-output.txt
 
       - name: Upload test results
         if: always()
@@ -67,11 +69,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create test results with default values if parsing fails
-          PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+' || echo "0")
-          FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+' || echo "0")
-          SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+' || echo "0")
-          DURATION=$(grep "passed" test-output.txt | grep -o '([^)]*)'|| echo "(0ms)")
+          # First verify test output exists
+          TEST_OUTPUT_FILE="test-results/test-output.txt"
+          if [ ! -f "$TEST_OUTPUT_FILE" ]; then
+            echo "Creating empty test output file"
+            touch "$TEST_OUTPUT_FILE"
+          fi
 
           # Generate new results file
           {
