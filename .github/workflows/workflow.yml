@@ -41,13 +41,13 @@ jobs:
       - name: Update README with test results
         if: always()
         run: |
-          echo -e "\n## Latest Test Run Results ($(date)) 📊\n" > test-results.md
+          echo -e "## Latest Test Run Results ($(date)) 📊\n" > test-results.md
           echo "### Test Statistics:" >> test-results.md
-          TOTAL=$(grep -o 'All <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
-          PASSED=$(grep -o 'Passed <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
-          FAILED=$(grep -o 'Failed <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
-          FLAKY=$(grep -o 'Flaky <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
-          SKIPPED=$(grep -o 'Skipped <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          TOTAL=$(grep -o 'class="d-inline counter">[0-9]*' playwright-report/index.html | grep -o '[0-9]*' | head -1)
+          PASSED=$(grep -o 'class="d-inline counter">[0-9]*' playwright-report/index.html | grep -o '[0-9]*' | head -2 | tail -1)
+          FAILED=$(grep -o 'class="d-inline counter">[0-9]*' playwright-report/index.html | grep -o '[0-9]*' | head -3 | tail -1)
+          FLAKY=$(grep -o 'class="d-inline counter">[0-9]*' playwright-report/index.html | grep -o '[0-9]*' | head -4 | tail -1)
+          SKIPPED=$(grep -o 'class="d-inline counter">[0-9]*' playwright-report/index.html | grep -o '[0-9]*' | head -5 | tail -1)
           echo "- ✨ Total Tests: $TOTAL" >> test-results.md
           echo "- ✅ Passed: $PASSED" >> test-results.md
           echo "- ❌ Failed: $FAILED" >> test-results.md
