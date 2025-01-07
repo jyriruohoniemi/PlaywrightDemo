@@ -43,18 +43,16 @@ jobs:
         run: |
           echo -e "## Latest Test Run Results ($(date)) 📊\n" > test-results.md
           echo "### Test Statistics:" >> test-results.md
-          cat playwright-report/index.html > temp.txt
-          TOTAL=$(cat temp.txt | grep -o '<span class="d-inline counter">[0-9]*' | head -1 | grep -o '[0-9]*')
-          PASSED=$(cat temp.txt | grep -o '<span class="d-inline counter">[0-9]*' | head -2 | tail -1 | grep -o '[0-9]*')
-          FAILED=$(cat temp.txt | grep -o '<span class="d-inline counter">[0-9]*' | head -3 | tail -1 | grep -o '[0-9]*')
-          FLAKY=$(cat temp.txt | grep -o '<span class="d-inline counter">[0-9]*' | head -4 | tail -1 | grep -o '[0-9]*')
-          SKIPPED=$(cat temp.txt | grep -o '<span class="d-inline counter">[0-9]*' | head -5 | tail -1 | grep -o '[0-9]*')
+          TOTAL=$(grep -o 'All <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          PASSED=$(grep -o 'Passed <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          FAILED=$(grep -o 'Failed <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          FLAKY=$(grep -o 'Flaky <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          SKIPPED=$(grep -o 'Skipped <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
           echo "- ✨ Total Tests: $TOTAL" >> test-results.md
           echo "- ✅ Passed: $PASSED" >> test-results.md
           echo "- ❌ Failed: $FAILED" >> test-results.md
           echo "- 🔄 Flaky: $FLAKY" >> test-results.md
           echo "- ⏭️ Skipped: $SKIPPED" >> test-results.md
-          rm temp.txt
           sed -i '/## Latest Test Run Results/,$d' README.md
           cat test-results.md >> README.md
           git config --global user.name 'GitHub Actions'
