@@ -48,6 +48,11 @@ jobs:
           echo "- ⏱️ Duration: $(grep -o 'took.*' playwright-report/index.html | head -1)" >> test-results.md
           sed -i '/## Latest Test Run Results/,$d' README.md
           cat test-results.md >> README.md
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add README.md
+          git commit -m "Update test results in README"
+          git push
 
       - name: Upload videos
         if: always()
