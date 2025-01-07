@@ -41,11 +41,18 @@ jobs:
       - name: Update README with test results
         if: always()
         run: |
-          echo "## Latest Test Run Results ($(date)) 📊" > test-results.md
-          echo "- ✨ Total Tests: $(grep -c 'test(' playwright-report/index.html)" >> test-results.md
-          echo "- ✅ Passed: $(grep -c 'passed' playwright-report/index.html)" >> test-results.md
-          echo "- ❌ Failed: $(grep -c 'failed' playwright-report/index.html)" >> test-results.md
-          echo "- ⏱️ Duration: $(grep -o 'took.*' playwright-report/index.html | head -1)" >> test-results.md
+          echo -e "\n## Latest Test Run Results ($(date)) 📊\n" > test-results.md
+          echo "### Test Statistics:" >> test-results.md
+          TOTAL=$(grep -o 'All <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          PASSED=$(grep -o 'Passed <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          FAILED=$(grep -o 'Failed <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          FLAKY=$(grep -o 'Flaky <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          SKIPPED=$(grep -o 'Skipped <span class="counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          echo "- ✨ Total Tests: $TOTAL" >> test-results.md
+          echo "- ✅ Passed: $PASSED" >> test-results.md
+          echo "- ❌ Failed: $FAILED" >> test-results.md
+          echo "- 🔄 Flaky: $FLAKY" >> test-results.md
+          echo "- ⏭️ Skipped: $SKIPPED" >> test-results.md
           sed -i '/## Latest Test Run Results/,$d' README.md
           cat test-results.md >> README.md
           git config --global user.name 'GitHub Actions'
