@@ -6,7 +6,7 @@ on:
     branches: [main, master, showcase-runner]
 
 jobs:
-  test:
+  Main:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -85,11 +85,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Parse results from the correct path in playwright-results directory
-          PASSED=$(grep "passed" playwright-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-          FAILED=$(grep "failed" playwright-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-          SKIPPED=$(grep "skipped" playwright-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-          DURATION=$(grep -o '([0-9.]+m)' playwright-results/test-output.txt || echo "(0ms)")
+          # Parse test counts - looking for numbers before the status word
+          PASSED=$(grep "passed" playwright-results/test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
+          FAILED=$(grep "failed" playwright-results/test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
+          SKIPPED=$(grep "skipped" playwright-results/test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
+          # Parse duration - looking for the time in parentheses
+          DURATION=$(grep "passed" playwright-results/test-output.txt | grep -o '([0-9.]\+m)' || echo "(0ms)")
 
           # Generate new results file
           {
