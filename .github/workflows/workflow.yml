@@ -59,6 +59,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Ensure we're in the git repository
+          cd $GITHUB_WORKSPACE
+
           # Ensure test output exists and has content
           if [ ! -f test-output.txt ] || [ ! -s test-output.txt ]; then
             echo "No test results found"
