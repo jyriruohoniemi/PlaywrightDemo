@@ -8,10 +8,12 @@
 
 This is modified and more lightweight version of the original Ngx-Admin Angular 14 application from akveo.com to practice UI Automation with Playwright.
 
-## Latest Test Run Results (Tue Jan  7 22:13:03 UTC 2025) 📊
+## Latest Test Run Results (Tue Jan  7 22:18:33 UTC 2025) 📊
 
 ### Test Statistics:
-- ✅ Passed: 0
+- ✅ Passed: 19
+1
+2
 - ❌ Failed: 0
-- ⏭️ Skipped: 0
+- ⏭️ Skipped: 2
 - ⏱️ Duration: (0ms)
