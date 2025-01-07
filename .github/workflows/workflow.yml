@@ -58,7 +58,8 @@ jobs:
         if: always()
         run: |
           ls -l test-output.txt
-          echo -e "## Latest Test Run Results ($(date)) 📊\n" > test-results.md
+          $CHART='\U1F4CA'
+          echo -e "## Latest Test Run Results ($(date)) ${CHART}\n" > test-results.md
           echo "### Test Statistics:" >> test-results.md
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+')
           SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+')
