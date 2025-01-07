@@ -41,6 +41,10 @@ jobs:
       - name: Update README with test results
         if: always()
         run: |
+          echo "Checking if report exists:"
+          ls -la playwright-report/
+          echo "Checking report content:"
+          cat playwright-report/index.html | grep "counter"
           echo -e "## Latest Test Run Results ($(date)) 📊\n" > test-results.md
           echo "### Test Statistics:" >> test-results.md
           TOTAL=$(grep -o 'All <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
@@ -48,6 +52,12 @@ jobs:
           FAILED=$(grep -o 'Failed <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
           FLAKY=$(grep -o 'Flaky <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
           SKIPPED=$(grep -o 'Skipped <span class="d-inline counter">[0-9]*</span>' playwright-report/index.html | grep -o '[0-9]*')
+          echo "Extracted values:"
+          echo "TOTAL: $TOTAL"
+          echo "PASSED: $PASSED"
+          echo "FAILED: $FAILED"
+          echo "FLAKY: $FLAKY"
+          echo "SKIPPED: $SKIPPED"
           echo "- ✨ Total Tests: $TOTAL" >> test-results.md
           echo "- ✅ Passed: $PASSED" >> test-results.md
           echo "- ❌ Failed: $FAILED" >> test-results.md
