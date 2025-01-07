@@ -56,38 +56,41 @@ jobs:
 
       - name: Update README with test results
         if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Test output:"
-          ls -l test-output.txt
-          CHART='\U1F4CA'
-          CHECKMARK='\U2705'
-          CROSSMARK='\U274C'
-          SKIP='\U23ED'
-          CLOCK='\U1F559'
+          # Ensure test output exists and has content
+          if [ ! -f test-output.txt ] || [ ! -s test-output.txt ]; then
+            echo "No test results found"
+            exit 1
+          fi
 
-          # No spaces around = in bash variable assignment
-          echo -e "## Latest Test Run Results ($(date)) ${CHART}\n" > test-results.md
-          echo "### Test Statistics:" >> test-results.md
-          PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+')
-          SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+')
-          DURATION=$(grep "passed" test-output.txt | grep -o '([^)]*)')
-          FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+')
+          # Set git configuration
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          echo "Extracted values:"
-          echo "PASSED: $PASSED"
-          echo "FAILED: $FAILED"
-          echo "SKIPPED: $SKIPPED"
-          echo "DURATION: $DURATION"
+          # Create test results with default values if parsing fails
+          PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+' || echo "0")
+          FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+' || echo "0")
+          SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+' || echo "0")
+          DURATION=$(grep "passed" test-output.txt | grep -o '([^)]*)'|| echo "(0ms)")
 
-          echo -e "- ${CHECKMARK} Passed: $PASSED" >> test-results.md
-          echo -e "- ${CROSSMARK} Failed: $FAILED" >> test-results.md
-          echo -e "- ${SKIP} Skipped: $SKIPPED" >> test-results.md
-          echo -e "- ${CLOCK} Duration: $DURATION" >> test-results.md
+          # Generate new results file
+          {
+            echo "## Latest Test Run Results ($(date)) 📊"
+            echo ""
+            echo "### Test Statistics:"
+            echo "- ✅ Passed: ${PASSED}"
+            echo "- ❌ Failed: ${FAILED}" 
+            echo "- ⏭️ Skipped: ${SKIPPED}"
+            echo "- ⏱️ Duration: ${DURATION}"
+          } > test-results.md
 
-          sed -i '/## Latest Test Run Results/,$d' README.md
+          # Update README
+          sed -i '/## Latest Test Run Results/,$d' README.md || true
           cat test-results.md >> README.md
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
+
+          # Push changes
           git add README.md
-          git commit -m "Update test results in README"
-          git push
+          git commit -m "Update test results in README [skip ci]"
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
