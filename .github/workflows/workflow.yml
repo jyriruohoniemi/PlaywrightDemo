@@ -32,14 +32,17 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          # Run tests and save output to variable first
+          # Run tests and save output to artifact directory
+          mkdir -p playwright-results
           TEST_OUTPUT=$(npx playwright test --project=chromium --workers 4 2>&1)
-          # Save output to file
-          echo "$TEST_OUTPUT" > test-output.txt
-          # Display for verification
-          echo "=== Test Output ==="
-          cat test-output.txt
-          echo "=== End Test Output ==="
+          echo "$TEST_OUTPUT" > playwright-results/test-output.txt
+
+      - name: Upload test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output
+          path: playwright-results/test-output.txt
 
       - name: Upload test results
         if: always()
@@ -69,6 +72,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+
+      - name: Download test output
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: test-output
+          path: playwright-results
 
       - name: Update README with test results
         if: always()
