@@ -58,26 +58,31 @@ jobs:
         if: always()
         run: |
           ls -l test-output.txt
-          $CHART='\U1F4CA'
+          CHART='\U1F4CA'
+          CHECKMARK='\U2705'
+          CROSSMARK='\U274C'
+          SKIP='\U23ED'
+          CLOCK='\U1F559'
+
+          # No spaces around = in bash variable assignment
           echo -e "## Latest Test Run Results ($(date)) ${CHART}\n" > test-results.md
           echo "### Test Statistics:" >> test-results.md
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+')
           SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+')
           DURATION=$(grep "passed" test-output.txt | grep -o '([^)]*)')
           FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+')
+
           echo "Extracted values:"
           echo "PASSED: $PASSED"
           echo "FAILED: $FAILED"
           echo "SKIPPED: $SKIPPED"
           echo "DURATION: $DURATION"
-          $CHECKMARK='\U2705'
-          $CROSSMARK='\U274C'
-          $SKIP='\U23ED'
-          $CLOCK='\U1F559'
+
           echo -e "- ${CHECKMARK} Passed: $PASSED" >> test-results.md
           echo -e "- ${CROSSMARK} Failed: $FAILED" >> test-results.md
           echo -e "- ${SKIP} Skipped: $SKIPPED" >> test-results.md
           echo -e "- ${CLOCK} Duration: $DURATION" >> test-results.md
+
           sed -i '/## Latest Test Run Results/,$d' README.md
           cat test-results.md >> README.md
           git config --global user.name 'GitHub Actions'
