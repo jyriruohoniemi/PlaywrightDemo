@@ -59,19 +59,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Ensure we're in the git repository
-          cd $GITHUB_WORKSPACE
-
-          # Ensure test output exists and has content
-          if [ ! -f test-output.txt ] || [ ! -s test-output.txt ]; then
-            echo "No test results found"
-            exit 1
-          fi
-
-          # Set git configuration
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
           # Create test results with default values if parsing fails
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+' || echo "0")
           FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+' || echo "0")
@@ -93,7 +80,9 @@ jobs:
           sed -i '/## Latest Test Run Results/,$d' README.md || true
           cat test-results.md >> README.md
 
-          # Push changes
+          # Configure git and push
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
           git commit -m "Update test results in README [skip ci]"
-          git push origin HEAD:${GITHUB_REF#refs/heads/}
+          git push
