@@ -1,0 +1,8 @@
+
+Running 21 tests using 1 worker
+···°°················
+  Slow test file: [chromium] › autoWaiting.spec.ts (54.5s)
+  Slow test file: [chromium] › uiCompnenets.spec.ts (34.4s)
+  Consider splitting slow test files to speed up parallel execution
+  2 skipped
+  19 passed (2.2m)
