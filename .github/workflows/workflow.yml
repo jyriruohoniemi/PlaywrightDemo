@@ -32,8 +32,14 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          # Run tests and save output directly to file
-          npx playwright test --project=chromium --workers 4 2>&1 | tee test-output.txt || true
+          # Create output directory
+          mkdir -p test-results
+          # Run tests with explicit output redirection
+          npx playwright test --project=chromium --workers 4 2>&1 | tee test-results/test-output.txt
+          # Show captured output for verification
+          echo "=== Captured Test Output ==="
+          cat test-results/test-output.txt
+          echo "=== End Captured Output ==="
 
       - name: Upload test results
         if: always()
@@ -69,32 +75,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Debug: Show test output if it exists
-          if [ -f "test-output.txt" ]; then
-            echo "=== Test Output File Contents ==="
-            cat test-output.txt
-            echo "=== End Test Output ==="
-            
-            # Parse results from root directory file
-            PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+' || echo "0")
-            FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+' || echo "0")
-            SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+' || echo "0")
-            DURATION=$(grep "passed" test-output.txt | grep -o '([^)]*)'|| echo "(0ms)")
-          else
-            echo "No test output file found, using default values"
-            PASSED="0"
-            FAILED="0"
-            SKIPPED="0"
-            DURATION="(0ms)"
-          fi
-
-          # Try to parse actual results if file exists
-          if [ -f "test-results/test-output.txt" ]; then
-            PASSED=$(grep "passed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-            FAILED=$(grep "failed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-            SKIPPED=$(grep "skipped" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
-            DURATION=$(grep "passed" test-results/test-output.txt | grep -o '([^)]*)'|| echo "(0ms)")
-          fi
+          # Parse results from the correct location
+          PASSED=$(grep "passed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
+          FAILED=$(grep "failed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
+          SKIPPED=$(grep "skipped" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
+          DURATION=$(grep "passed" test-results/test-output.txt | grep -o '([^)]*)'|| echo "(0ms)")
 
           # Generate new results file
           {
