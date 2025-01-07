@@ -59,12 +59,10 @@ jobs:
         run: |
           echo -e "## Latest Test Run Results ($(date)) 📊\n" > test-results.md
           echo "### Test Statistics:" >> test-results.md
-          TOTAL=$(grep "Running" test-output.txt | grep -o '[0-9]\+')
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+')
           SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+')
           DURATION=$(grep "passed" test-output.txt | grep -o '([^)]*)')
           FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+')
-          echo "- ✨ Total Tests: $TOTAL" >> test-results.md
           echo "- ✅ Passed: $PASSED" >> test-results.md
           echo "- ❌ Failed: $FAILED" >> test-results.md
           echo "- ⏭️ Skipped: $SKIPPED" >> test-results.md
