@@ -32,8 +32,12 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          mkdir -p test-results
-          npx playwright test --project=chromium --workers 4 > test-results/test-output.txt 2>&1
+          # Show current directory
+          pwd
+          # Run tests and explicitly save output
+          npx playwright test --project=chromium --workers 4 | tee test-output.txt
+          # Show where the file was created
+          ls -la
 
       - name: Upload test results
         if: always()
@@ -69,9 +73,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Debug: Show test output content
+          # Debug: Show current directory and files
+          pwd
+          ls -la
           echo "=== Test Output File Contents ==="
-          cat test-results/test-output.txt
+          cat test-output.txt
           echo "=== End Test Output ==="
 
           # Ensure working directory exists
