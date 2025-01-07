@@ -29,7 +29,7 @@ jobs:
           npm start & npx wait-on http://localhost:4200
 
       - name: Run Playwright tests
-        run: npx playwright test --project=chromium > test-output.txt 2>&1
+        run: npx playwright test --project=chromium --workers 4 > test-output.txt 2>&1
 
       - name: Upload test results
         if: always()
@@ -57,16 +57,26 @@ jobs:
       - name: Update README with test results
         if: always()
         run: |
+          ls -l test-output.txt
           echo -e "## Latest Test Run Results ($(date)) 📊\n" > test-results.md
           echo "### Test Statistics:" >> test-results.md
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+')
           SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+')
           DURATION=$(grep "passed" test-output.txt | grep -o '([^)]*)')
           FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+')
-          echo "- ✅ Passed: $PASSED" >> test-results.md
-          echo "- ❌ Failed: $FAILED" >> test-results.md
-          echo "- ⏭️ Skipped: $SKIPPED" >> test-results.md
-          echo "- ⏱️ Duration: $DURATION" >> test-results.md
+          echo "Extracted values:"
+          echo "PASSED: $PASSED"
+          echo "FAILED: $FAILED"
+          echo "SKIPPED: $SKIPPED"
+          echo "DURATION: $DURATION"
+          $CHECKMARK='\U2705'
+          $CROSSMARK='\U274C'
+          $SKIP='\U23ED'
+          $CLOCK='\U1F559'
+          echo -e "- ${CHECKMARK} Passed: $PASSED" >> test-results.md
+          echo -e "- ${CROSSMARK} Failed: $FAILED" >> test-results.md
+          echo -e "- ${SKIP} Skipped: $SKIPPED" >> test-results.md
+          echo -e "- ${CLOCK} Duration: $DURATION" >> test-results.md
           sed -i '/## Latest Test Run Results/,$d' README.md
           cat test-results.md >> README.md
           git config --global user.name 'GitHub Actions'
