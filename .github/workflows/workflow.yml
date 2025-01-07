@@ -33,7 +33,7 @@ jobs:
       - name: Run Playwright tests
         run: |
           mkdir -p test-results
-          npx playwright test --project=chromium --workers 4 | tee test-results/test-output.txt
+          npx playwright test --project=chromium --workers 4 > test-results/test-output.txt 2>&1
 
       - name: Upload test results
         if: always()
@@ -69,11 +69,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # First verify test output exists
-          TEST_OUTPUT_FILE="test-results/test-output.txt"
-          if [ ! -f "$TEST_OUTPUT_FILE" ]; then
-            echo "Creating empty test output file"
-            touch "$TEST_OUTPUT_FILE"
+          # Ensure working directory exists
+          mkdir -p test-results
+
+          # Set default values for test results
+          PASSED="0"
+          FAILED="0"
+          SKIPPED="0"
+          DURATION="(0ms)"
+
+          # Try to parse actual results if file exists
+          if [ -f "test-results/test-output.txt" ]; then
+            PASSED=$(grep "passed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
+            FAILED=$(grep "failed" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
+            SKIPPED=$(grep "skipped" test-results/test-output.txt | grep -o '[0-9]\+' || echo "0")
+            DURATION=$(grep "passed" test-results/test-output.txt | grep -o '([^)]*)'|| echo "(0ms)")
           fi
 
           # Generate new results file
