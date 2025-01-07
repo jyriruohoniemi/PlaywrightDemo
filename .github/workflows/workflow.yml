@@ -38,6 +38,17 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
+      - name: Update README with test results
+        if: always()
+        run: |
+          echo "## Latest Test Run Results ($(date)) 📊" > test-results.md
+          echo "- ✨ Total Tests: $(grep -c 'test(' playwright-report/index.html)" >> test-results.md
+          echo "- ✅ Passed: $(grep -c 'passed' playwright-report/index.html)" >> test-results.md
+          echo "- ❌ Failed: $(grep -c 'failed' playwright-report/index.html)" >> test-results.md
+          echo "- ⏱️ Duration: $(grep -o 'took.*' playwright-report/index.html | head -1)" >> test-results.md
+          sed -i '/## Latest Test Run Results/,$d' README.md
+          cat test-results.md >> README.md
+
       - name: Upload videos
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,17 +56,11 @@ jobs:
           name: test-videos
           path: test-results/**/*.webm
 
-      - name: Deploy report to GitHub Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: playwright-report
-
       - name: Deploy report and videos
         if: always()
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
           keep_files: true
+          exclude_assets: ".github"
