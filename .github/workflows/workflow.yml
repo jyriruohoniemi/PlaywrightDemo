@@ -57,6 +57,7 @@ jobs:
       - name: Update README with test results
         if: always()
         run: |
+          echo "Test output:"
           ls -l test-output.txt
           CHART='\U1F4CA'
           CHECKMARK='\U2705'
