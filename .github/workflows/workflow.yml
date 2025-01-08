@@ -58,15 +58,6 @@ jobs:
           name: test-videos
           path: test-results/**/*.webm
 
-      - name: Deploy to GitHub Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          exclude_assets: ".github,node_modules"
-          enable_jekyll: true
-
       - name: Deploy test report
         if: always()
         uses: peaceiris/actions-gh-pages@v3
@@ -91,6 +82,12 @@ jobs:
         with:
           name: test-output
           path: playwright-results
+
+      - name: Get Github Token
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Update README with test results
         if: always()
