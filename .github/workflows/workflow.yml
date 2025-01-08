@@ -87,7 +87,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: test-output
-          path: playwright-results
+          path: playwright-results/test-output.txt
 
       - name: Get Github Token
         uses: actions/checkout@v4
