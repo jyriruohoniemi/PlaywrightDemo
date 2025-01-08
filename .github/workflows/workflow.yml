@@ -100,16 +100,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Set timezone to Finnish time (Europe/Helsinki)
-          ls -la playwright-results/
-          cat playwright-results/test-output.txt
           export TZ=Europe/Helsinki
+          ls -la
+          ls -la playwright-results
 
-          # Parse test counts from the downloaded artifact
-          PASSED=$(grep "passed" playwright-results/test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
-          FAILED=$(grep "failed" playwright-results/test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
-          SKIPPED=$(grep "skipped" playwright-results/test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
-          DURATION=$(grep "passed" playwright-results/test-output.txt | grep -o '([0-9.]\+m)' || echo "(0m)")
+          PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
+          FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
+          SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
+          DURATION=$(grep "passed" test-output.txt | grep -o '([0-9.]\+m)' || echo "(0m)")
 
           # Stash any local changes
           git stash
