@@ -95,6 +95,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Verify downloaded artifacts
+        run: |
+          find . -name test-output.txt
+          ls -la playwright-results/
+          cat playwright-results/test-output.txt
+
       - name: Update README with Test Results
         if: always()
         env:
