@@ -44,16 +44,19 @@ jobs:
           name: test-output
           path: playwright-results/test-output.txt
 
-      - name: Upload test results and videos
+      - name: Upload test results
         if: always()
-        uses: peaceiris/actions-gh-pages@v4
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: |
-            playwright-report/
-            test-results/
-          keep_files: false # Set to false to always use latest
-          exclude_assets: ".github"
+          name: playwright-report
+          path: playwright-report/
+
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-videos
+          path: test-results/**/*.webm
 
       - name: Deploy report and videos
         if: always()
@@ -61,8 +64,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
-          keep_files: true
           exclude_assets: ".github"
+          keep_files: false
 
       - name: Get Github Token
         uses: actions/checkout@v4
@@ -85,20 +88,13 @@ jobs:
           # Set timezone to Finnish time (Europe/Helsinki)
           export TZ=Europe/Helsinki
 
-          # Parse test counts - looking for numbers before the status word
+          # Parse test counts
           PASSED=$(grep "passed" playwright-results/test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
           FAILED=$(grep "failed" playwright-results/test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
           SKIPPED=$(grep "skipped" playwright-results/test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
-          # Parse duration - looking for the time in parentheses
           DURATION=$(grep "passed" playwright-results/test-output.txt | grep -o '([0-9.]\+m)' || echo "(0m)")
 
-          # Set empty values to 0
-          PASSED=${PASSED:-0}
-          FAILED=${FAILED:-0}
-          SKIPPED=${SKIPPED:-0}
-          DURATION=${DURATION:-"(0m)"}
-
-          # Generate new results file
+          # Generate new results file with Finnish timestamp
           {
             echo "## Latest Test Run Results ($(date '+%Y-%m-%d %H:%M:%S %Z')) 📊"
             echo ""
