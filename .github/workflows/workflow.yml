@@ -19,10 +19,10 @@ jobs:
         with:
           node-version: "16"
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install --force
 
-      - name: Install Playwright browsers
+      - name: Install Playwright Browser
         run: npx playwright install chromium
 
       - name: Build and start Angular app
@@ -30,42 +30,42 @@ jobs:
           npm run
           npm start & npx wait-on http://localhost:4200
 
-      - name: Run Playwright tests
+      - name: Run Playwright Tests
         run: |
           # Run tests and save output to artifact directory
           mkdir -p playwright-results
           TEST_OUTPUT=$(npx playwright test --project=chromium --workers 4 2>&1)
           echo "$TEST_OUTPUT" > playwright-results/test-output.txt
 
-      - name: Upload test output
+      - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-output
           path: playwright-results/test-output.txt
 
-      - name: Upload test results
+      - name: Upload Test Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
 
-      - name: Upload videos
+      - name: Upload Videos
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-videos
           path: test-results/**/*.webm
 
-      - name: Download test report
+      - name: Download Test Report
         if: always()
         uses: actions/download-artifact@v4
         with:
           name: playwright-report
           path: playwright-report
 
-      - name: Download test videos
+      - name: Download Test Videos
         if: always()
         uses: actions/download-artifact@v4
         with:
@@ -80,7 +80,7 @@ jobs:
           publish_dir: ./playwright-report
           keep_files: false
 
-      - name: Download test output
+      - name: Download Test Output for README
         if: always()
         uses: actions/download-artifact@v4
         with:
@@ -93,12 +93,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Update README with test results
+      - name: Update README with Test Results
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Set timezone to Finnish time (Europe/Helsinki)
+          ls -la playwright-results/
+          cat playwright-results/test-output.txt
           export TZ=Europe/Helsinki
 
           # Parse test counts from the downloaded artifact
