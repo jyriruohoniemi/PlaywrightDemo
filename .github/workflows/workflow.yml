@@ -14,6 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get Github Token
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -88,12 +94,6 @@ jobs:
         with:
           name: test-output
           path: .
-
-      - name: Get Github Token
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
 
       - name: Verify downloaded artifacts
         run: |
