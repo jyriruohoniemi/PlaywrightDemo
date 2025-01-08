@@ -58,13 +58,22 @@ jobs:
           name: test-videos
           path: test-results/**/*.webm
 
-      - name: Deploy report and videos
+      - name: Deploy test report
         if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          exclude_assets: ".github"
+          publish_dir: ./playwright-report
+          destination_dir: report
+          keep_files: false
+
+      - name: Deploy test videos
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./test-results
+          destination_dir: videos
           keep_files: false
 
       - name: Get Github Token
