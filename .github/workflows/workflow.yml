@@ -101,11 +101,7 @@ jobs:
           # Set timezone to Finnish time (Europe/Helsinki)
           export TZ=Europe/Helsinki
 
-          # Download test output first
-          mkdir -p playwright-results
-          cp test-output.txt playwright-results/
-
-          # Parse test counts
+          # Parse test counts from the downloaded artifact
           PASSED=$(grep "passed" playwright-results/test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
           FAILED=$(grep "failed" playwright-results/test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
           SKIPPED=$(grep "skipped" playwright-results/test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
