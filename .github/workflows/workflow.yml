@@ -111,13 +111,17 @@ jobs:
           export TZ=Europe/Helsinki
           cd playwright-results
 
-          # Parse test counts
+          # Parse test counts with debug output
+          echo "Parsing test results..."
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
           FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
           SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
           DURATION=$(grep "passed" test-output.txt | grep -o '([0-9.]\+m)' || echo "(0m)")
 
-          # Generate new results section
+          echo "Test counts - Passed: ${PASSED}, Failed: ${FAILED}, Skipped: ${SKIPPED}"
+
+          # Generate and show new content
+          echo "Generating new README content..."
           {
             echo "## Latest Test Run Results ($(date '+%Y-%m-%d %H:%M:%S %Z')) 📊"
             echo ""
@@ -128,7 +132,10 @@ jobs:
             echo "- ⏱️ Duration: ${DURATION}"
           } > test-results.md
 
-          # Update README
+          cat test-results.md
+
+          # Update README with debug output
+          echo "Updating README..."
           sed -i '/## Latest Test Run Results/,$d' README.md || true
           cat test-results.md >> README.md
 
