@@ -111,21 +111,28 @@ jobs:
           export TZ=Europe/Helsinki
           cd playwright-results
 
+          # Parse test counts
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
           FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
           SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
           DURATION=$(grep "passed" test-output.txt | grep -o '([0-9.]\+m)' || echo "(0m)")
 
-          # Stash any local changes
-          git stash
+          # Generate new results section
+          {
+            echo "## Latest Test Run Results ($(date '+%Y-%m-%d %H:%M:%S %Z')) 📊"
+            echo ""
+            echo "### Test Statistics:"
+            echo "- ✅ Passed: ${PASSED}"
+            echo "- ❌ Failed: ${FAILED}" 
+            echo "- ⏭️ Skipped: ${SKIPPED}"
+            echo "- ⏱️ Duration: ${DURATION}"
+          } > test-results.md
 
-          # Pull latest changes
-          git pull
+          # Update README
+          sed -i '/## Latest Test Run Results/,$d' README.md || true
+          cat test-results.md >> README.md
 
-          # Pop stashed changes
-          git stash pop
-
-          # Update README and push
+          # Configure git and push
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
