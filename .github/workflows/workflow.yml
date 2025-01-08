@@ -100,6 +100,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          ls -la
+          ls -la playwright-results
           export TZ=Europe/Helsinki
           cd playwright-results
 
