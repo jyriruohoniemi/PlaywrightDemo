@@ -1,0 +1,5 @@
+
+Running 21 tests using 4 workers
+°°···················
+  2 skipped
+  19 passed (1.2m)
