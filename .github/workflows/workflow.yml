@@ -44,19 +44,16 @@ jobs:
           name: test-output
           path: playwright-results/test-output.txt
 
-      - name: Upload test results
+      - name: Upload test results and videos
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          name: playwright-report
-          path: playwright-report/
-
-      - name: Upload videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-videos
-          path: test-results/**/*.webm
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: |
+            playwright-report/
+            test-results/
+          keep_files: false # Set to false to always use latest
+          exclude_assets: ".github"
 
       - name: Deploy report and videos
         if: always()
@@ -85,6 +82,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Set timezone to Finnish time (Europe/Helsinki)
+          export TZ=Europe/Helsinki
+
           # Parse test counts - looking for numbers before the status word
           PASSED=$(grep "passed" playwright-results/test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
           FAILED=$(grep "failed" playwright-results/test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
@@ -100,7 +100,7 @@ jobs:
 
           # Generate new results file
           {
-            echo "## Latest Test Run Results ($(date)) 📊"
+            echo "## Latest Test Run Results ($(date '+%Y-%m-%d %H:%M:%S %Z')) 📊"
             echo ""
             echo "### Test Statistics:"
             echo "- ✅ Passed: ${PASSED}"
@@ -116,6 +116,7 @@ jobs:
           # Configure git and push
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull
           git add README.md
           git commit -m "Update test results in README [skip ci]"
           git push
