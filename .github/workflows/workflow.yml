@@ -36,6 +36,8 @@ jobs:
           mkdir -p playwright-results
           TEST_OUTPUT=$(npx playwright test --project=chromium --workers 4 2>&1)
           echo "$TEST_OUTPUT" > playwright-results/test-output.txt
+          ls -la playwright-results/
+          cat playwright-results/test-output.txt
 
       - name: Upload Test Results
         if: always()
