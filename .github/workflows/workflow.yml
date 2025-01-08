@@ -58,6 +58,15 @@ jobs:
           name: test-videos
           path: test-results/**/*.webm
 
+      - name: Deploy to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          exclude_assets: ".github,node_modules"
+          enable_jekyll: true
+
       - name: Deploy test report
         if: always()
         uses: peaceiris/actions-gh-pages@v4
@@ -75,12 +84,6 @@ jobs:
           publish_dir: ./test-results
           destination_dir: videos
           keep_files: false
-
-      - name: Get Github Token
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
 
       - name: Download test output
         if: always()
