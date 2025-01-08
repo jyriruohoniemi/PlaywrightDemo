@@ -58,6 +58,20 @@ jobs:
           name: test-videos
           path: test-results/**/*.webm
 
+      - name: Download test report
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+
+      - name: Download test videos
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: test-videos
+          path: test-results
+
       - name: Deploy report and videos
         if: always()
         uses: peaceiris/actions-gh-pages@v3
