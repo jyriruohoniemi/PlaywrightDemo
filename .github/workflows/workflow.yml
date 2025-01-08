@@ -106,22 +106,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ls -la
-          ls -la playwright-results
           export TZ=Europe/Helsinki
-          cd playwright-results
 
-          # Parse test counts with debug output
+          # Parse test counts with default values
           echo "Parsing test results..."
-          PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
-          FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
-          SKIPPED=$(grep "skipped" test-output.txt | grep -o '[0-9]\+ skipped' | cut -d' ' -f1 || echo "0")
-          DURATION=$(grep "passed" test-output.txt | grep -o '([0-9.]\+m)' || echo "(0m)")
+          PASSED=$(grep -o '[0-9]\+ passed' test-output.txt | cut -d' ' -f1 || echo "0")
+          FAILED=$(grep -o '[0-9]\+ failed' test-output.txt | cut -d' ' -f1 || echo "0")
+          SKIPPED=$(grep -o '[0-9]\+ skipped' test-output.txt | cut -d' ' -f1 || echo "0")
+          DURATION=$(grep -o '([0-9.]\+m)' test-output.txt || echo "(0m)")
 
-          echo "Test counts - Passed: ${PASSED}, Failed: ${FAILED}, Skipped: ${SKIPPED}"
+          echo "Test counts - Passed: ${PASSED}, Failed: ${FAILED}, Skipped: ${SKIPPED}, Duration: ${DURATION}"
 
-          # Generate and show new content
-          echo "Generating new README content..."
+          # Generate new content
           {
             echo "## Latest Test Run Results ($(date '+%Y-%m-%d %H:%M:%S %Z')) 📊"
             echo ""
@@ -132,16 +128,13 @@ jobs:
             echo "- ⏱️ Duration: ${DURATION}"
           } > test-results.md
 
-          cat test-results.md
-
-          # Update README with debug output
-          echo "Updating README..."
-          sed -i '/## Latest Test Run Results/,$d' README.md || true
+          # Update README
+          sed -i '/## Latest Test Run Results/,$d' README.md
           cat test-results.md >> README.md
 
-          # Configure git and push
+          # Commit and push changes
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
           git commit -m "Update test results in README [skip ci]"
-          git push --force
+          git push
