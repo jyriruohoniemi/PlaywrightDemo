@@ -87,7 +87,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: test-output
-          path: playwright-results/test-output.txt
+          path: playwright-results
 
       - name: Get Github Token
         uses: actions/checkout@v4
@@ -101,8 +101,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           export TZ=Europe/Helsinki
-          ls -la
-          ls -la playwright-results
+          cd playwright-results
 
           PASSED=$(grep "passed" test-output.txt | grep -o '[0-9]\+ passed' | cut -d' ' -f1 || echo "0")
           FAILED=$(grep "failed" test-output.txt | grep -o '[0-9]\+ failed' | cut -d' ' -f1 || echo "0")
