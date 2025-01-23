@@ -1,5 +1,3 @@
-### Playwright UI Automation Demo
-
 # Playwright Test Automation Demo
 ![Playwright Tests](https://github.com/jyriruohoniemi/PlaywrightDemo/actions/workflows/workflow.yml/badge.svg)
 
